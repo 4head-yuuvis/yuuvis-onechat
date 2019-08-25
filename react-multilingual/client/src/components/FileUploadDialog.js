@@ -12,7 +12,7 @@ const FileUploadDialog = props => {
     handleInput,
     uploadAttachment,
   } = props;
-
+  
   return (
     <div className="dialog-container">
       <div className="dialog">

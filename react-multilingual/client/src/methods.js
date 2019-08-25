@@ -1,5 +1,8 @@
 import Chatkit from '@pusher/chatkit-client';
 import axios from 'axios';
+import {yuuvisUploadItem} from './components/yuuvis/YuuvisUploadItems';
+var request = require('request');
+var r = new FileReader();
 
 
 function toggleFileUploadDialog() {
@@ -12,7 +15,33 @@ function uploadAttachment(event) {
   event.preventDefault();
   const { fileMessage, currentUser, currentRoom } = this.state;
   const file = this.fileAttachment.current.files[0];
+  // console.log(file);
+  r.onload = function(){ console.log(r.result); };
+  // console.log(r.readAsBinaryString(file));
 
+  var doc_img="https://i.imgur.com/8iEZZ5d.png";
+  var pdf_img="https://i.imgur.com/njzp65F.png";
+  var link = '';
+  var doc=false;
+  var doc_contentType='';
+  if (link.includes('.pdf')) {
+    link = pdf_img;
+    doc=true;
+    doc_contentType='application/pdf';
+  }
+  if (link.includes('.doc')) {
+    link = doc_img;
+    doc=true;
+    if (link.includes('.docx')) {
+      doc_contentType='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    } else {
+      doc_contentType='application/msword';
+    }
+    
+  }
+  if (doc) {
+    yuuvisUploadItem(file.name, file.name, r.readAsBinaryString(file), doc_contentType);
+  }
   currentUser
     .sendMessage({
       text: fileMessage || file.name,
@@ -240,7 +269,6 @@ function translateText(message) {
       } else {
         messages.push(msg);
       }
-      console.log(messages);
 
       this.setState({
         messages: messages.sort((a, b) => {

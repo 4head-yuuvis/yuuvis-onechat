@@ -1,32 +1,49 @@
 import React from 'react';
 import Proptypes from 'prop-types';
 import { format } from 'date-fns';
-var textract = require('textract');
-const url = require('url');
+
+
 
 
 const ChatSession = props => {
   const { messages } = props;
   return messages.map(message => {
-    // console.log(message);
     const time = format(new Date(`${message.updatedAt}`), 'HH:mm');
     var doc_img="https://i.imgur.com/8iEZZ5d.png";
     var pdf_img="https://i.imgur.com/njzp65F.png";
     var link = '';
     var doc=false;
+    var doc_contentType='';
     if (message.attachment) {
       var link = message.attachment.link;
       if (link.includes('.pdf')) {
         link = pdf_img;
         doc=true;
+        doc_contentType='application/pdf';
       }
       if (link.includes('.doc')) {
         link = doc_img;
         doc=true;
+        if (link.includes('.docx')) {
+          doc_contentType='application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        } else {
+          doc_contentType='application/msword';
+        }
+        
       }
-      const myURL = url.parse(message.attachment.link);
-
-      textract.fromUrl(myURL, function( error, text ) {console.log(text)});
+      var requestSettings = {
+        method: 'GET',
+        url: message.attachment.link,
+        encoding: null,
+      };
+      // if(doc){
+      //   request(requestSettings, function(error, response, body) {
+      //     // Use body as a binary Buffer
+      //     // console.log(body);
+      //     //yuuvisUploadItem(message.attachment.name+'_original', message.attachment.name, body, doc_contentType)
+      //   })
+        
+      // }
     }
     return (
       <li className="message" key={message.id}>
